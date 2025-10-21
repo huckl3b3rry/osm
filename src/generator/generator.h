@@ -121,7 +121,7 @@ public:
 
     QUuid uuid() const;
 
-    // V1.1: Sweep for calibration - generates linear freq ramp for impulse response
+    // V1.1: Sweep for calibration - generates log sweep for impulse response
     Q_INVOKABLE void startCalibrationSweep(int startHz = 20, int endHz = 20000, float seconds = 10.0f);
 
 signals:
