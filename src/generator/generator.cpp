@@ -152,6 +152,22 @@ QUuid Generator::uuid() const
     return m_uuid;
 }
 
+void Generator::startCalibrationSweep(int startHz, int endHz, float seconds)
+{
+    // Guard invalid values to avoid crashes in audio layer
+    if (startHz < 1) startHz = 1;
+    if (endHz <= startHz) endHz = startHz + 1;
+    if (seconds <= 0.05f) seconds = 0.05f;
+
+    // Configure SinSweep generator type (index is fixed by GeneratorThread::init order)
+    setStartFrequency(startHz);
+    setEndFrequency(endHz);
+    setDuration(seconds);
+
+    setType(3); // 0:Pink,1:White,2:Sin,3:SinSweep
+    setEnabled(true);
+}
+
 void Generator::setEnabled(bool enabled)
 {
     QMetaObject::invokeMethod(

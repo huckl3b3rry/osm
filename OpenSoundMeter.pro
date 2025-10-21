@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick quickcontrols2 core
+QT += qml quick quickcontrols2 core sql
 CONFIG += c++1z
 CONFIG += sdk_no_version_check
 CONFIG += qmltypes
@@ -79,6 +79,8 @@ SOURCES += src/main.cpp \
     src/source/equalizer.cpp \
     src/sourcelist.cpp \
     src/targettrace.cpp \
+    src/core/SessionManager.cpp \
+    src/db/CalibrationDB.cpp \
     \
     src/math/bandpass.cpp \
     src/math/biquad.cpp \
@@ -248,6 +250,8 @@ HEADERS += \
     src/model/sourcemodel.h \
     src/source/standardline.h \
     src/targettrace.h \
+    src/core/SessionManager.h \
+    src/db/CalibrationDB.h \
     src/source/union.h \
     src/generator/generator.h \
     src/generator/generatorthread.h \

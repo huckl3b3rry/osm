@@ -38,6 +38,8 @@ Sample SinSweep::sample()
 {
     auto T = m_duration;
     auto t = m_phase;
+    // Logarithmic sweep from m_start to m_end over duration T.
+    // S(t) = sin(2*pi*f0*T/ln(f1/f0) * (exp(ln(f1/f0)*t/T) - 1))
     float phase = 2.f * M_PI * m_start * T / std::log(m_end / m_start);
     phase *= std::exp(std::log(m_end / m_start) * t / T) - 1;
 

@@ -43,6 +43,8 @@
 #include "remote/server.h"
 #include "remote/remoteclient.h"
 #include "chart/meterplot.h"
+#include "core/SessionManager.h"
+#include "db/CalibrationDB.h"
 
 #ifdef GRAPH_METAL
 #include "src/chart/metal/seriesnode.h"
@@ -88,6 +90,16 @@ int main(int argc, char *argv[])
     Appearance appearence(&settings);
     audio::Client::getInstance();
     auto generator = std::make_shared<Generator>(settings.getGroup("generator"));
+    // V1.0: Bolt Migration - Initialize local Calibration DB and Session manager
+    auto sessionManager = std::make_shared<SessionManager>();
+    if (!sessionManager->initProject("LocalMVP")) {
+        qDebug() << "Calibration DB init failed; continuing without calibration storage";
+    } else {
+        const auto testId = sessionManager->db()->insertTestSession("bootstrap");
+        if (testId <= 0) {
+            qDebug() << "Calibration DB test insert failed";
+        }
+    }
     Shared::SourceList sourceList = std::make_shared<SourceList>();
     AutoSaver autoSaver(settings.getGroup("autosaver"), sourceList);
     auto t = new TargetTrace(settings.getGroup("targettrace"));
@@ -131,6 +143,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("generatorModel", generator.get());
     engine.rootContext()->setContextProperty("targetTraceModel", t);
     engine.rootContext()->setContextProperty("notifier", notifier);
+    engine.rootContext()->setContextProperty("sessionManager", sessionManager.get());
 
     engine.rootContext()->setContextProperty("autoSaver", &autoSaver);
 
@@ -140,6 +153,13 @@ int main(int argc, char *argv[])
 
     if (engine.rootObjects().isEmpty())
         return -1;
+
+    // Optional CLI flag: --calibrate triggers a demo sweep for testing
+    const auto args = app.arguments();
+    if (args.contains("--calibrate")) {
+        qDebug() << "--calibrate: starting 10s sweep 20-20k";
+        generator->startCalibrationSweep(20, 20000, 10.0f);
+    }
 
     return QApplication::exec();
 }
