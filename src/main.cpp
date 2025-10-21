@@ -43,8 +43,8 @@
 #include "remote/server.h"
 #include "remote/remoteclient.h"
 #include "chart/meterplot.h"
-#include "src/core/SessionManager.h"
-#include "src/db/CalibrationDB.h"
+#include "core/SessionManager.h"
+#include "db/CalibrationDB.h"
 
 #ifdef GRAPH_METAL
 #include "src/chart/metal/seriesnode.h"
